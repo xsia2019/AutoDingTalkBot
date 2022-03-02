@@ -65,8 +65,8 @@ if __name__ == '__main__':
         }
     }
 
-    webhook = sys.argv[0]
-    secret = sys.argv[1]
+    webhook = sys.argv[1]
+    secret = sys.argv[2]
 
     ding = DingTalkWebHook(secret=my_secret, url=my_url)
     ding.send_message(my_makedown)
