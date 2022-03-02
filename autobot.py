@@ -6,10 +6,11 @@ import hmac
 import json
 import time
 import urllib.request
+import sys
 
 
 class DingTalkWebHook(object):
-    def __init__(self, secret=None, url=None):
+    def __init__(self,  url=None, secret=None):
         """
         secret: 钉钉机器人加签信息
         url: 钉钉机器人没有加签的hook url
@@ -49,6 +50,8 @@ if __name__ == '__main__':
     my_secret = 'SECf1d13f27bbceb66a187c37e1a4e422e87e52d7718727f3a548f9b9533b94c3c0'
     my_url = 'https://oapi.dingtalk.com/robot/send?access_token' \
              '=80da5c52f55d190c732e25b0d222249c2e509a29df36c78d3b389b14d211c724'
+    webhook = sys.argv[0]
+    secret = sys.argv[1]
 
     my_makedown = {
         'msgtype': 'markdown',
@@ -66,3 +69,6 @@ if __name__ == '__main__':
 
     ding = DingTalkWebHook(secret=my_secret, url=my_url)
     ding.send_message(my_makedown)
+    autoding = DingTalkWebHook(url=webhook, secret=secret)
+    autoding.send_message(my_makedown)
+
