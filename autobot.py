@@ -57,7 +57,7 @@ if __name__ == '__main__':
         'msgtype': 'markdown',
         'markdown': {
             'title': 'Hello, world!',
-            'text': '#### 测试消息\n'
+            'text': '#### 测试消息2\n'
         },
         'at': {
             'atMobiles': [
