@@ -75,4 +75,5 @@ webhook = sys.argv[0]
 secret = sys.argv[1]
 ding = DingtalkChatbot(webhook, secret=secret)
 
-ding.send_message(title='testing', msg='测试消息', is_at_all=True)
+# ding.send_makedown(title='testing', msg='测试消息', is_at_all=True)
+ding.send_text(msg='我就是小丁，小丁就是我！', at_mobiles=at_mobiles)
