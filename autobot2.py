@@ -4,7 +4,10 @@ import re
 import requests
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 import csv
+from KEY.qweather_key import KEY
+import KEY.qweather_key
 
+my_key = KEY
 
 # 取得各种信息
 class GetInfo(object):
@@ -60,12 +63,14 @@ windScaleDay = today_weather['daily'][0]['windScaleDay']  # 风力
 # 定义消息内容 第一行标题，第二行天气，第三行图片链接，第四行每日一句
 mkd_msg = '### 今天天气\n' \
           '{textDay} {tempMin} - {tempMax} ℃，{windDirDay} {windScaleDay} 级。 \n\n' \
-          '![每日一图](http://WWW.BAIDU.COM)\n' \
+          '![picture](https://a.hecdn.net/img/common/icon/202106d/501.png) \n' \
           '##### 每日一句： \n' \
     .format(textDay=textDay, tempMin=tempMin, tempMax=tempMax,
             windDirDay=windDirDay, windScaleDay=windScaleDay)
 # img=today_img, sentence=today_sentence)
 #
+
+icon = '<img src="https://a.hecdn.net/img/common/icon/202106d/501.png" width="100" height="100">'
 
 KEY = '39736e9a40184e95998d6d6ef9dfae48'
 location = '101301301'
@@ -92,4 +97,4 @@ secret = bots[0][1]
 
 dingding = DingtalkChatbot(webhook, secret=secret)
 dingding.send_text(msg=text)
-# dingding.send_markdown(title='今日天气', text=mkd_msg, is_at_all=False)
+dingding.send_markdown(title='今日天气', text=icon, is_at_all=False)
