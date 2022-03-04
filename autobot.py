@@ -7,7 +7,6 @@ import json
 import re
 import time
 import urllib.request
-import sys
 import requests
 
 

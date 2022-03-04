@@ -4,7 +4,6 @@ import re
 import requests
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 import csv
-from KEY.qweather_key import KEY
 import KEY.qweather_key
 
 my_key = KEY
