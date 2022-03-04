@@ -94,15 +94,6 @@ class GetInfor(object):
             return None
 
 
-# WebHook地址
-webhook = r'https://oapi.dingtalk.com/robot/send?access_token' \
-          r'=80da5c52f55d190c732e25b0d222249c2e509a29df36c78d3b389b14d211c724'
-# 机器人密钥
-secret = r'SECf1d13f27bbceb66a187c37e1a4e422e87e52d7718727f3a548f9b9533b94c3c0'
-# 可选：创建机器人勾选“加签”选项时使用
-# 初始化机器人小丁
-xiaoding = DingTalkWebHook(webhook, secret=secret)
-
 # 取得天气信息
 dinginfo = GetInfor()
 today_weather = dinginfo.get_qweather()
@@ -113,63 +104,6 @@ tempMax = today_weather['daily'][0]['tempMax']  # 最高温度
 windDirDay = today_weather['daily'][0]['windDirDay']  # 风向
 windScaleDay = today_weather['daily'][0]['windScaleDay']  # 风力
 
-# 取得今日句子
-today_sentence = dinginfo.get_dailysentence()[0]
-# 取得今日图片链接
-today_img = dinginfo.get_dailysentence()[1]
-
-# 定义消息内容 第一行标题，第二行天气，第三行图片链接，第四行每日一句
-mkd_msg = '### 今天天气\n' \
-          '{textDay} {tempMin} - {tempMax} ℃，{windDirDay} {windScaleDay} 级。 \n\n' \
-          '![每日一图]({img})\n' \
-          '##### 每日一句：{sentence} \n' \
-    .format(textDay=textDay, tempMin=tempMin, tempMax=tempMax,
-            windDirDay=windDirDay, windScaleDay=windScaleDay,
-            img=today_img, sentence=today_sentence)
-
-mkd = {
-    'msgtype': 'markdown',
-    'markdown': {
-        'title': 'Hello, world!',
-        'text': today_sentence,
-    },
-    'at': {
-        'atMobiles': [
-            '17777909650'
-        ],
-        'isAtAll': False
-    }
-}
-
-# 发送信息
-xiaoding.send_message(mkd)
-
-if __name__ == '__main__':
-    my_secret = 'SECf1d13f27bbceb66a187c37e1a4e422e87e52d7718727f3a548f9b9533b94c3c0'
-    my_url = 'https://oapi.dingtalk.com/robot/send?access_token' \
-             '=80da5c52f55d190c732e25b0d222249c2e509a29df36c78d3b389b14d211c724'
-
-    my_makedown = {
-        'msgtype': 'markdown',
-        'markdown': {
-            'title': 'Hello, world!',
-            'text': '#### 测试消息1820\n'
-        },
-        'at': {
-            'atMobiles': [
-                '17777909650'
-            ],
-            'isAtAll': False
-        }
-    }
-
-    # webhook = sys.argv[1]
-    # secret = sys.argv[2]
-
-    ding = DingTalkWebHook(secret=my_secret, url=my_url)
-    ding.send_message(my_makedown)
-    # autoding = DingTalkWebHook(url=webhook, secret=secret)
-    # autoding.send_message(mkd_msg)
 
 # 实例化Euic
 euic = EduicContent()
@@ -177,11 +111,14 @@ euic = EduicContent()
 sentence = euic.get_daily_content()[0]
 # 取得每日图片
 image = euic.get_daily_content()[1]
-
+# 编辑要发送的信息
 md_message = '### 今天天气  \n  ' \
+             f'##### 今天白天{textDay} {tempMin} - {tempMax} 度 {windDirDay} {windScaleDay} 级  \n  ' \
              '![picture]({image})   \n  ' \
              '##### 每日一句：{sentence}  \n  '\
-    .format(image=image, sentence=sentence)
+    .format(textDay=textDay, tempMin=tempMin, tempMax=tempMax,
+            windDirDay=windDirDay, windScaleDay=windScaleDay,
+            image=image, sentence=sentence)
 
 # 接收系统传入的webhook和secret
 pipidou_webhook = sys.argv[1]
@@ -191,4 +128,4 @@ pipidou_secret = sys.argv[2]
 pipidou = DingtalkChatbot(pipidou_webhook, secret=pipidou_secret)
 
 pipidou.send_text(msg='欢迎使用自动化测试脚本')
-pipidou.send_markdown(title="每日一句", text=md_message, is_at_all=False)
+pipidou.send_markdown(title="今天天气", text=md_message, is_at_all=False)
