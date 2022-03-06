@@ -113,7 +113,7 @@ sentence = euic.get_daily_content()[0]
 image = euic.get_daily_content()[1]
 # 编辑要发送的信息
 md_message = '### 今天天气  \n  ' \
-             f'##### 今天白天{textDay} {tempMin} - {tempMax} 度 {windDirDay} {windScaleDay} 级  \n  ' \
+             f'##### 白天{textDay} {tempMin} - {tempMax} 度 {windDirDay} {windScaleDay} 级  \n  ' \
              '![picture]({image})   \n  ' \
              '##### 每日一句：{sentence}  \n  '\
     .format(textDay=textDay, tempMin=tempMin, tempMax=tempMax,
