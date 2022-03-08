@@ -49,3 +49,4 @@ pipidou = DingtalkChatbot(pipidou_webhook, secret=pipidou_secret)
 pipidou.send_text(msg='欢迎使用自动化测试脚本')
 pipidou.send_markdown(title="今天天气", text=md_message, is_at_all=False)
 # pipidou.send_markdown(title="工作信息", text=job_message, is_at_all=False)
+
