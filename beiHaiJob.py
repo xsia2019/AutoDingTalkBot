@@ -23,3 +23,6 @@ if __name__ == '__main__':
             job_message += '  \n  '
 
         bot.send_markdown(title="工作信息", text=job_message, is_at_all=False)
+    except Exception as e:
+        print(e)
+        print('发送失败')
