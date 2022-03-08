@@ -4,6 +4,18 @@ import sys
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 from Eduic.DailySentence import EduicContent
 from qWeather.qWeatherAPI import QWeatherApi
+from Lib.BeiHaiJob import BeiHaiJob
+
+# 实例化BeiHaiJob
+Beihai = BeiHaiJob()
+# 获取工作信息
+job_info = Beihai.get_job_now()
+# 整理成文字
+job_message = ''
+for item in job_info:
+    for i in range(len(item)):
+        job_message += item[i] + ', '
+    job_message += '  \n  '
 
 # 取得天气信息
 # 取得系统传入KEY
@@ -36,3 +48,4 @@ pipidou = DingtalkChatbot(pipidou_webhook, secret=pipidou_secret)
 
 pipidou.send_text(msg='欢迎使用自动化测试脚本')
 pipidou.send_markdown(title="今天天气", text=md_message, is_at_all=False)
+pipidou.send_markdown(title="工作信息", text=job_message, is_at_all=False)
