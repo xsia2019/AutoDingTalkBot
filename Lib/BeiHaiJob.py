@@ -80,7 +80,6 @@ class BeiHaiJob(object):
                     salary = re.search(r'\d{2,6}', salary).group().strip()
 
                 list = [title, salary, company, date]
-                print(list)
                 job_info.append(list)
             return job_info
 
