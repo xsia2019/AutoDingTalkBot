@@ -15,6 +15,7 @@ class BeiHaiJob(object):
     def __init__(self):
         self.headers = {'User-Agent': user_agent()}  # 取得ua
         self.url = 'https://www.365zhaopin.com/index.php?do=search&p='
+        self.homepage = 'https://www.365zhaopin.com/'
 
     #  获取网页内容
     def get_html(self, url):
@@ -60,6 +61,8 @@ class BeiHaiJob(object):
                 company = job_item.find('div', class_='panl10 mt3').get_text().strip()
                 # 发布日期
                 date = job_item.find('div', class_='panl5').get_text().strip()
+                # 详情链接
+                url = self.homepage + job_item.find('div', class_='panl1').find('a')['href']
 
                 # 处理工资
                 if re.search(r'（底薪([\d]{4,6}[-]?){1,2}', salary):
@@ -79,7 +82,7 @@ class BeiHaiJob(object):
                 else:
                     salary = re.search(r'\d{2,6}', salary).group().strip()
 
-                list = [title, salary, company, date]
+                list = [title, salary, company, date, url]
                 job_info.append(list)
             return job_info
 
@@ -88,9 +91,10 @@ class BeiHaiJob(object):
             return '解析错误'
 
     #  获取职位信息
-    def get_job_now(self):
+    def get_job_now(self, salary):
         job_list = []
-        for i in range(1, self.get_page_num() + 1):
+        page_num = self.get_page_num()
+        for i in range(1, page_num + 1):
             # 开始抓取
             html = self.get_html(self.url + str(i))
             job_info = self.get_job_info(html)
@@ -99,12 +103,23 @@ class BeiHaiJob(object):
                 break
 
             for item in job_info:
-                if int(item[1]) > 7999 and \
+                if int(item[1]) >= salary and \
                         re.search(r'(助理)|(副总)|(行政)|(主管)', item[0]) and \
                         item[3] == '今天':
                     job_list.append(item)
                     pass
                 else:
                     continue
+        # 处理职位信息
+        job_message = ''
+        # 发送消息
+        for job in job_list:
+            job_title = job[0][:4] + ', '
+            job_salary = job[1][:5] + ', '
+            job_company = job[2][:4] + ', '
+            job_date = job[3][:2] + ', '
+            job_url = '[详情](' + job[4] + ')'
 
-        return job_list
+            job_message += job_title + job_salary + job_company + job_date + job_url + '  \n  '
+
+        return job_list, job_message
