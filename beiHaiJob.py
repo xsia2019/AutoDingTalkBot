@@ -3,15 +3,16 @@
 import sys
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 from Lib.BeiHaiJob import BeiHaiJob
-from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
+# from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
 
 if __name__ == '__main__':
     try:
         # 接收系统传入的webhook和secret
-        # webhook = sys.argv[1]
-        # secret = sys.argv[2]
-        webhook = PiPiDou_webhook
-        secret = PiPiDou_secret
+        webhook = sys.argv[1]
+        secret = sys.argv[2]
+        # 本地测试用
+        # webhook = PiPiDou_webhook
+        # secret = PiPiDou_secret
         # 初始化
         bot = DingtalkChatbot(webhook, secret=secret)
 
