@@ -22,6 +22,7 @@ if __name__ == '__main__':
         job_message = jobInfo[1]
         # 发送消息
         bot.send_markdown(title="北海招聘信息", text=job_message, is_at_all=False)
+        bot.send_markdown(title="Copyright", text='By beiHaiJob.py, AutoDingTalkBot  \n  ', is_at_all=False)
     except Exception as e:
         print(e)
         print('发送失败')
