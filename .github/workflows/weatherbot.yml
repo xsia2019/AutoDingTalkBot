@@ -1,4 +1,4 @@
-name: DingTalk_misson
+name: weatherBot
 
 on:
   schedule:
@@ -25,4 +25,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run misson
       run: |
-        python autobot.py ${{ secrets.webhook }} ${{ secrets.secret }} ${{ secrets.qweather_key }}
+        python weatherbot.py ${{ secrets.webhook }} ${{ secrets.secret }} ${{ secrets.qweather_key }}
