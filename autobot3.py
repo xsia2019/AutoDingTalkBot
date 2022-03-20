@@ -3,7 +3,7 @@
 
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 from Eduic.DailySentence import EduicContent
-from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
+from pivateKey.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
 
 
 # 实例化Euic
