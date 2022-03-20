@@ -8,3 +8,8 @@ PiPiDou_secret = 'SECf1d13f27bbceb66a187c37e1a4e422e87e52d7718727f3a548f9b9533b9
 GuoNaoDou_webhook = 'https://oapi.dingtalk.com/robot/send?access_token=' \
                     '2c2753ecebaf4b8ba4eb77f17cbbb47e8a1996302b7017c8f372094aafb5b94c'    # Your API key
 GuoNaoDou_secret = 'SEC79412ce2b1c6c7c22a603dc7672408e96b27dbc5c2c73b20417ef7623c10cc0e'    # Your API key
+
+# 惠惠
+HuiHui_webhook = 'https://oapi.dingtalk.com/robot/send?access_token=565f202ba6aae9c4985381714746e7a05888fb8de47eb2741e441dd062c3fdd5'
+HuiHui_secret = 'SECea0682eaf29326a6359e36fef82f51bd4edb1c87509c32e885a8a3018b3ba4a4'
+
