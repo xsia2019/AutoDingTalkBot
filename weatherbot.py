@@ -9,7 +9,7 @@ from qWeather.qWeatherAPI import QWeatherApi
 # 取得系统传入KEY
 qweather_key = sys.argv[3]
 # 实例化qWeather
-qWeather = weather = QWeatherApi(key=qweather_key)
+qWeather = QWeatherApi(key=qweather_key)
 # 取得天气信息
 forcast = qWeather.get_weather_forecast()
 
