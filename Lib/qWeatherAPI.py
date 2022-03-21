@@ -5,16 +5,16 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-from KEY.qweather_key import qweather_key
+# from KEY.qweather_key import qweather_key
 
 ''' official website  https://www.qweather.com '''
 '''      dev website  https://dev.qweather.com'''
 
-qweather_key = qweather_key
+# qweather_key = qweather_key
 
 
 class QWeatherApi:
-    def __init__(self, key=qweather_key):
+    def __init__(self, qweather_key):
         # 自定义headers
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
