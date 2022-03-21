@@ -1,4 +1,4 @@
-from qWeather.qWeatherAPI import QWeatherApi
+from Lib.qWeatherAPI import QWeatherApi
 from KEY.qweather_key import qweather_key
 
 if __name__ == '__main__':

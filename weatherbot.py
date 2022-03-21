@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import sys
-from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
+from dingtalkchatbot.chatbot import DingtalkChatbot
 from Eduic.DailySentence import EduicContent
-from qWeather.qWeatherAPI import QWeatherApi
+from Lib.qWeatherAPI import QWeatherApi
 
 # 取得天气信息
 # 取得系统传入KEY
 qweather_key = sys.argv[3]
+# qweather_key = ' '
 # 实例化qWeather
-qWeather = QWeatherApi(key=qweather_key)
+qWeather = QWeatherApi(qweather_key)
 # 取得天气信息
 forcast = qWeather.get_weather_forecast()
 
@@ -29,9 +29,11 @@ md_message = '#### 北海实时天气  \n  ' \
 # 接收系统传入的webhook和secret
 bot_webhook = sys.argv[1]
 bot_secret = sys.argv[2]
+# bot_webhook = ''
+# bot_secret = ''
 
 # 实例化DingtalkChatbot
 bot = DingtalkChatbot(bot_webhook, secret=bot_secret)
 
 bot.send_markdown(title="北海实时天气", text=md_message, is_at_all=False)
-# pipidou.send_markdown(title="工作信息", text=job_message, is_at_all=False)
+
