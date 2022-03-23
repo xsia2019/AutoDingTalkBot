@@ -14,6 +14,11 @@ qWeather = QWeatherApi(qweather_key)
 forcast = qWeather.get_weather_forecast()
 # 取得生活指数
 indices = qWeather.get_my_indices('Beihai')
+# 舒适度指数
+indice_text = ''
+for i in range(len(indices)):
+    indice_text += indices[i] + '  \n  '
+
 
 # 取得每日图片和每日一句
 # 实例化Euic
@@ -30,7 +35,7 @@ md_message = '#### 北海实时天气  \n  ' \
 
 indices_message = '#### 北海生活指数  \n  ' \
                   '###### {indices}  \n  ' \
-    .format(forcast=forcast, indices=indices, )
+    .format(forcast=forcast, indices=indice_text, )
 
 
 # 接收系统传入的webhook和secret
