@@ -1,17 +1,29 @@
 from Lib.qWeatherAPI import QWeatherApi
 from KEY.qweather_key import qweather_key
 
+
+qweather_key = qweather_key
+
 if __name__ == '__main__':
 
-    weather = QWeatherApi(key=qweather_key)
-    city_beihai = weather.get_city_info('北海')
-    city_beijing = weather.get_city_info('北京')
-    beihai_now = weather.get_weather_now(city_beihai[0])
-    beijing_now = weather.get_weather_now(city_beijing[0])
+    qweather = QWeatherApi(qweather_key)
 
-    forcast_beihai = weather.get_weather_forecast()
+    # Get the current weather
+    city = qweather.get_city_info('Beihai')
 
-    print(city_beihai, city_beijing)
-    print(beihai_now, beijing_now)
+    indices = qweather.get_indices('Beihai')
+    print(indices)
 
-    print(forcast_beihai)
+    my_indice = qweather.get_my_indices('Beihai')
+    print(my_indice[0])
+    print(my_indice[1])
+    print(my_indice[2])
+    print(my_indice[3])
+    print(my_indice[4])
+
+    pingguo = qweather.get_my_indices('pingguo')
+    print(pingguo[0])
+    print(pingguo[1])
+    print(pingguo[2])
+    print(pingguo[3])
+    print(pingguo[4])

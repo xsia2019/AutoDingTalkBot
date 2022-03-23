@@ -5,12 +5,10 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-# from KEY.qweather_key import qweather_key
+
 
 ''' official website  https://www.qweather.com '''
 '''      dev website  https://dev.qweather.com'''
-
-# qweather_key = qweather_key
 
 
 class QWeatherApi:
@@ -42,6 +40,7 @@ class QWeatherApi:
 
     def get_city_info(self, city_kw):
         url = self.url_api_geo + 'lookup?location=' + city_kw + '&key=' + self.key
+
         city = requests.get(url, headers=self.headers, timeout=30).json()['location'][0]
 
         city_id = city['id']
@@ -51,8 +50,9 @@ class QWeatherApi:
         country_name = city['country']
         lat = city['lat']
         lon = city['lon']
+        fxLink = city['fxLink']
         # 返回 城市ID，城市区名，城市名，省份名，国家名，纬度，经度，
-        return city_id, district_name, city_name, province_name, country_name, lat, lon
+        return city_id, district_name, city_name, province_name, country_name, lat, lon, fxLink
 
     def get_weather_now(self, city_id):
         url = '{url}?location={id}&key={key}'.format(url=self.url_api_weather_now, id=city_id, key=self.key)
@@ -78,7 +78,43 @@ class QWeatherApi:
         weather = soup.find('div', class_='current-abstract').text.strip()
         return weather
 
+    def get_weather_message(self, city):
+        city_id = self.get_city_info(city)[0]
+        return city_id
 
+    # 生活指数信息
+    def get_indices(self, city):
+        city_id = self.get_city_info(city)[0]
+        # 生活指数链接 + type=0(全部） + &location=city_id + &key=your_key
+        url = self.url_api_indices + 'type=0' + '&location=' + city_id + '&key=' + self.key
+        result = requests.get(url, headers=self.headers, timeout=30).json()
+        indices = []
+        for i in result['daily']:
+            date = i['date']
+            type = i['type']
+            name = i['name']
+            level = i['level']
+            category = i['category']
+            text = i['text']
+            # message = date + ', ' + type + ', ' + name + ', ' + level + ', ' + category + ', ' + text
+            message = [date, type, name, level, category, text]
+            indices.append(message)
+        return indices
+
+    # 主要生活指数信息
+    def get_my_indices(self, city):
+        indices = self.get_indices(city)
+        # 舒适度指数
+        indice_0 = indices[7][2] + '：' + indices[7][4] + '。' + indices[7][5]
+        # 穿衣指数
+        indice_1 = indices[2][2] + '：' + indices[2][4] + '。' + indices[2][5]
+        # 运动指数
+        indice_2 = indices[0][2] + '：' + indices[0][4] + '。' + indices[0][5]
+        # 洗车指数
+        indice_3 = indices[1][2] + '：' + indices[1][4] + '。' + indices[1][5]
+        # 空调开启指数
+        indice_4 = indices[10][2] + '：' + indices[10][4] + '。' + indices[10][5]
+        return indice_0, indice_1, indice_2, indice_3, indice_4
 
 #
 # def get(api_type):
