@@ -1,0 +1,2 @@
+PiPiDou_webhook = 'https://oapi.dingtalk.com/robot/send?access_token=80da5c52f55d190c732e25b0d222249c2e509a29df36c78d3b389b14d211c724'
+PiPiDou_secret = 'SECf1d13f27bbceb66a187c37e1a4e422e87e52d7718727f3a548f9b9533b94c3c0'

@@ -89,7 +89,7 @@ class GXRCAPI(object):
         today = get_timestr()[1]
         for info in self.get_job_info():
             if info[-1] == today:  # 过滤非今天日期信息
-                if int(info[3]) > 10000:  # 薪水大于10000
+                if int(info[3]) > 14999:  # 薪水大于10000
                     if re.search(r'(助理)|(副总)|(行政)|(主管)|(总监)', info[1]):  # 匹配职位名称
                         my_job_info.append(info)
                         print(info)
@@ -108,8 +108,8 @@ class GXRCAPI(object):
             job_date = job[6][5:] + ', '
             job_url = '[详情](' + job[0] + ')'
 
-            job_message += job_title + job_salary + job_company + job_date + job_url + '  \n  '
-        return job_message
+            job_message += job_title + job_salary + job_company + job_date + job_url + '  \n'
+        yield job_message
 
     #  根据url取得网页htm内容
     def get_html(self, url):
