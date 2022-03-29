@@ -28,7 +28,7 @@ if __name__ == '__main__':
         # 获取gxrc招聘信息
         gxrc = GXRCAPI()
         # job_info = gxrc.get_my_job_info()
-        message = gxrc.get_job_message()
+        message = gxrc.get_my_job_message()
 
         # 发送消息
         # bot.send_markdown(title="北海招聘信息", text=bhjob_message, is_at_all=False)

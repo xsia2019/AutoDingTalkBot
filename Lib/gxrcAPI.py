@@ -50,7 +50,7 @@ class GXRCAPI(object):
             html = self.get_html(url)
             soup = BeautifulSoup(html, 'lxml')
             # 所有内容列表
-            job_items = soup.find_all('ul', class_='posDetailUL clearfix')
+            job_items = soup.find('div', class_='posDetailWrap').find_all('div', class_='rlOne')
             try:
                 for job_info in job_items:
                     job_url = 'https:' + job_info.find('li', class_='w1').find('a')['href'].strip()
@@ -67,6 +67,7 @@ class GXRCAPI(object):
 
                     job_address = job_info.find('li', class_='w4').get_text().strip()
                     job_time = job_info.find('li', class_='w5').get_text().strip()
+                    job_posInfo = job_info.find('span', class_='posInfo').get_text().strip()
 
                     # job_info_dict = {
                     #     'job_url': job_url,
@@ -77,7 +78,7 @@ class GXRCAPI(object):
                     #     'job_time': job_time,
                     # }
 
-                    yield job_url, job_name, job_company, job_salary_low, job_salary_high, job_address, job_time
+                    yield job_url, job_name, job_company, job_salary_low, job_salary_high, job_address, job_time, job_posInfo
             except Exception as e:
                 print(url)
                 print(e)
@@ -110,6 +111,26 @@ class GXRCAPI(object):
 
             job_message += job_title + job_salary + job_company + job_date + job_url + '  \n'
         yield job_message
+
+    def get_my_job_message(self):
+        today = get_timestr()[1]
+        for info in self.get_job_info():
+            job_message = ''
+            if info[-2] == today:       # 过滤非今天日期信息
+                if int(info[3]) > 14999:        # 薪水大于10000
+                    if re.search(r'(助理)|(副总)|(行政)|(主管)|(总监)', info[1]):  # 匹配职位名称
+                        title = info[1] + ', '
+                        salary = info[3] + ', '
+                        company = info[2] + ', '
+                        date = info[6] + ', '
+                        url = '[详情](' + info[0] + ')'
+                        posInfo = info[7]
+                        job_message += title + salary + company + date + url + '  \n' + posInfo + '  \n'
+                        yield job_message
+            else:
+                break
+
+
 
     #  根据url取得网页htm内容
     def get_html(self, url):
