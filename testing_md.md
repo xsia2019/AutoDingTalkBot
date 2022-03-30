@@ -9,6 +9,7 @@
 
 [testing_md]
 
+[readme]
 
 [google]
 
@@ -17,10 +18,11 @@
 
 
 
+---
+
 
 [testing_md]: # ( Relative path: testing_md.md )
-
 [google]: <https://www.google.com>
+[readme]: <https://raw.githubusercontent.com/xsia2019/AutoDingTalkBot/master/readme.md>
 
-[//]: # ( Language: Markdown )  
-[//]: # ( Path: testing_md.md )
+
