@@ -23,6 +23,6 @@
 
 [testing_md]: # ( Relative path: testing_md.md )
 [google]: <https://www.google.com>
-[readme]: <https://raw.githubusercontent.com/xsia2019/AutoDingTalkBot/master/readme.md>
+[readme]: <https://github.com/xsia2019/AutoDingTalkBot/blob/master/readme.md>
 
 
