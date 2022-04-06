@@ -84,19 +84,26 @@ class GXRCAPI(object):
                 print(e)
 
     # 过滤职位信息
-    def get_my_job_info(self):
+    def get_my_job_info(self, date='Today', salary=14999):
         my_job_info = []
+        del_job_title_pattern = re.compile(r'(营销)|(经营)|(招商)|(运营)|(生产)|(财务)')
+        sel_job_title_pattern = re.compile(r'(助理)|(副总)|(行政)|(主管)|(总监)')
         # 取得今天日期
-        today = get_timestr()[1]
+        today = get_timestr()[1] if date == 'Today' else date
         for info in self.get_job_info():
-            if info[-1] == today:  # 过滤非今天日期信息
-                if int(info[3]) > 14999:  # 薪水大于10000
-                    if re.search(r'(助理)|(副总)|(行政)|(主管)|(总监)', info[1]):  # 匹配职位名称
-                        my_job_info.append(info)
-                        print(info)
+            if info[-2] == today:  # 过滤非今天日期信息
+                # if re.search(r'(营销)|(经营)', info[1]): # 过滤特定职位名称
+                if del_job_title_pattern.search(info[1]): # 过滤特定职位名称
+                    continue
+                elif int(info[3]) > salary:  # 薪水大于10000
+                    # if re.search(r'(助理)|(副总)|(行政)|(主管)|(总监)', info[1]):  # 匹配职位名称
+                    if sel_job_title_pattern.search(info[1]):  # 匹配职位名称
+                        # my_job_info.append(info)
+                        # print(info)
+                        yield info
             else:
                 break
-        return my_job_info
+        # return my_job_info
 
     # 处理职位信息
     def get_job_message(self):

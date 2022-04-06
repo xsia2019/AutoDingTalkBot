@@ -45,10 +45,10 @@ if __name__ == '__main__':
         # bhjob_url = jobInfo[2]
         # 获取gxrc招聘信息
         gxrc = GXRCAPI()
-        job_info = gxrc.get_job_info()
+        job_info = gxrc.get_my_job_info(date='Today', salary=10000)
         for job in job_info:
-            print(job[1])
-            save_job_title(filename, job[1])
+            print(job)
+            # save_job_title(filename, job[1])
         # message = gxrc.get_my_job_message()
         #
         # # 发送消息
