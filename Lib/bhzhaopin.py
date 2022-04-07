@@ -1,23 +1,42 @@
 # 查询北海365招聘网上的职位信息
 # https://www.365zhaopin.com/
-# author: kinofgl
 # -*- coding: utf-8 -*-
 
-import random
 import re
 import time
+import random
 import requests
+import datetime
 from bs4 import BeautifulSoup
 from fake_user_agent.main import user_agent
 
+# 根据关键字列表生成re过滤器
+def get_pattern(words):
+    if words is not None:
+        keywords = [word.strip() for word in words.split(',') if word]
+        pattern = '|'.join(keywords)
+        return re.compile(pattern)
+    else:
+        return None
+
 
 class BeiHaiJob(object):
-    def __init__(self, salary=10000, exclusive=None):
+    def __init__(self, salary=10000, exc_job=None, exc_company=None,):
         self.headers = {'User-Agent': user_agent()}  # 取得ua
+        # 北海365招聘网职位信息列表首页
         self.url = 'https://www.365zhaopin.com/index.php?do=search&p='
+        # 北海365招聘网主页
         self.homepage = 'https://www.365zhaopin.com/'
-        self.salary = salary
-        self.exclusive = exclusive
+        # 接收关键字
+        self.salary = salary       # 薪水标准默认10000
+        self.exc_job = exc_job
+        self.exc_company = exc_company
+        # 计数参量
+        self.total_count = 0
+        self.job_count = 0
+        # 运行时间
+        self.start_time = datetime.datetime.now()
+        self.end_time = None
 
     #  获取网页内容
     def get_html(self, url):
@@ -42,9 +61,14 @@ class BeiHaiJob(object):
         soup = BeautifulSoup(html, 'lxml')
         # 获取页数
         page_num = soup.select('span.ml20')[0].get_text()
-        # 处理页数
+        # 处理页数，通常页数为3位数
         page_num = int(page_num[2:5])
         return page_num
+
+    # 生成链接
+    def get_url(self):
+        for i in range(1, self.get_page_num()+1):
+            yield self.url + str(i)
 
     #  解析网页内容
     def get_job_info(self, response):
@@ -91,61 +115,51 @@ class BeiHaiJob(object):
             return '解析错误'
 
     #  获取今天的职位信息
-    def get_today_job(self):
-        """
-        :return: 返回主要职位信息
-        """
-        # 取得总页数
-        page_num = self.get_page_num()
-        # 根据页数生成url
-        for i in range(1, page_num + 1):
+    def get_today_info(self):
+        for url in self.get_url():
             # 开始抓取html
-            html = self.get_html(self.url + str(i))
+            html = self.get_html(url)
             # 解析html得到职位信息
             job_info = self.get_job_info(html)
             # 根据薪水标准筛选职位信息
             for item in job_info:
                 # 如果不是今天发布的职位信息，中止抓取
                 if item[3] != '今天':
+                    self.end_time = datetime.datetime.now()
                     break
                 else:
                     yield item
 
     # 筛选职位信息
     def filter_job(self):
-        for job_info in self.get_today_job():
+        # 根据关键字筛选职位信息
+        for job_info in self.get_today_info():
+            self.total_count += 1
             title = job_info[0]
             salary = int(job_info[1])
+            company = job_info[2]
             # 职位薪水大于等于设定值
             if salary >= self.salary:
                 # 如果设定了筛选职位信息，则根据关键字筛选（去除）
-                if self.exclusive is not None:
+                if self.exc_job is not None:
                     # 根据关键字生成pattern
-                    pattern = self.get_pattern(self.exclusive)
-                    # 如果职位名称中包含关键字，则抛弃，否则返回职位信息
-                    if re.search(pattern, title):
+                    pattern_job = get_pattern(self.exc_job)
+                    pattern_company = get_pattern(self.exc_company)
+                    # 如果职位名称中包含关键字或公司名称包含关键字，则抛弃，否则返回职位信息
+                    if re.search(pattern_job, title) or re.search(pattern_company, company):
                         continue
                     else:
+                        self.job_count += 1
                         yield job_info
                 # 如果没有设定筛选职位信息，则直接返回
                 else:
+                    self.job_count += 1
                     yield job_info
             else:
                 continue
 
-    # 根据关键字列表生成re过滤器
-    def get_pattern(self, words):
-        if words is not None:
-            keywords = [word.strip() for word in words.split(',') if word]
-            pattern = '|'.join(keywords)
-            return re.compile(pattern)
-        else:
-            return None
-
-
     # 获取职位信息并格式化输出
-    def get_job_info_format(self):
-        job_message = ''
+    def get_info_format(self):
         # 根据工作
         for job in self.filter_job():
             job_title = job[0] + ', '
@@ -154,6 +168,6 @@ class BeiHaiJob(object):
             job_date = job[3] + ', '
             job_url = '[详情](' + job[4] + ')'
 
-            job_message += job_title + job_salary + job_company + job_date + job_url + '  \n  '
+            # 返回生成的文字
+            yield job_title + job_salary + job_company + job_date + job_url + '  \n  '
 
-        yield job_message
