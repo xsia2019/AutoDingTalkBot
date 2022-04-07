@@ -1,36 +1,50 @@
 # -*- coding: utf-8 -*-
 
+
 import sys
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
-from Lib.BeiHaiJob import BeiHaiJob
-from Lib.gxrcAPI import GXRCAPI
-# from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
+from Lib.bhzhaopin import BeiHaiJob
+import datetime
+
+# 读取文件
+def read_file(file_name):
+    with open(file_name, 'r', encoding='utf-8') as f:
+        return f.read()
 
 if __name__ == '__main__':
     try:
         # 接收系统传入的webhook和secret
         webhook = sys.argv[1]
         secret = sys.argv[2]
-        # 本地测试用
-        # webhook = PiPiDou_webhook
-        # secret = PiPiDou_secret
-        # 初始化
+        # 初始化钉钉机器人
         bot = DingtalkChatbot(webhook, secret=secret)
 
+        # 定义筛选条件
+        salary = 10000
+        exc_job = read_file('exclusive_job.txt')
+        exc_company = read_file('exclusive_company.txt')
+
         # 获取招聘信息
-        beiHaiJob = BeiHaiJob()
-        jobInfo = beiHaiJob.get_job_now(10000)
-        bhjob_message = jobInfo[1]
+        beihaijob = BeiHaiJob(salary=salary, exc_job=exc_job, exc_company=exc_company)
+        jobInfo = beihaijob.get_info_format()
 
-        # 获取gxrc招聘信息
-        gxrc = GXRCAPI()
-        gxrc_message = gxrc.get_job_message()
+        # 汇总消息
+        job_message = ''
+        for job in jobInfo:
+            job_message += job
 
-        # 发送消息
-        bot.send_markdown(title="北海招聘信息", text=bhjob_message, is_at_all=False)
-        bot.send_markdown(title="广西人才网", text=gxrc_message, is_at_all=False)
+        # 程序运行信息
+        total_count = beihaijob.total_count
+        job_count = beihaijob.job_count
+        usage = (beihaijob.end_time - beihaijob.start_time).seconds
+        message = '总共抓取了{}条招聘信息，其中有{}条有效信息，耗时{}秒'.format(total_count, job_count, usage)
 
-        bot.send_markdown(title="Copyright", text='By beihaijob.py, AutoDingTalkBot  \n  ', is_at_all=False)
+        today = datetime.datetime.today().strftime('%Y-%m-%d')
+
+        bot.send_markdown(title="Podcast", text='即将为你发送 {} 的北海招聘信息  \n  ', is_at_all=False)
+        bot.send_markdown(title="北海招聘信息", text=job_message, is_at_all=False)
+        bot.send_markdown(title="程序运行信息", text=message, is_at_all=False)
+        bot.send_markdown(title="Copyright", text='Power by AutoDingTalkBot on Github Actions  \n  ', is_at_all=False)
 
     except Exception as e:
         print(e)
