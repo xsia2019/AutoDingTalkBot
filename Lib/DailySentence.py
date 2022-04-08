@@ -6,7 +6,7 @@ import requests
 import re
 
 
-class EduicContent(object):
+class EuDicNet(object):
 
     def __init__(self):
         self.url = 'http://dict.eudic.net/home/dailysentence/'

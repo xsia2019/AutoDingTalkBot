@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from dingtalkchatbot.chatbot import DingtalkChatbot
-from Eduic.DailySentence import EduicContent
+from Lib.DailySentence import EduicContent
 from Lib.qWeatherAPI import QWeatherApi
 
 # 取得天气信息
