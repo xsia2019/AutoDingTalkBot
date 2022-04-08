@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
         today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-        bot.send_markdown(title="Podcast", text='即将为你发送 {} 的北海招聘信息  \n  ', is_at_all=False)
+        bot.send_markdown(title="Podcast", text='即将为你发送 {} 的北海招聘信息  \n  '.format(today), is_at_all=False)
         bot.send_markdown(title="北海招聘信息", text=job_message, is_at_all=False)
         bot.send_markdown(title="程序运行信息", text=message, is_at_all=False)
         bot.send_markdown(title="Copyright", text='Power by AutoDingTalkBot on Github Actions  \n  ', is_at_all=False)
