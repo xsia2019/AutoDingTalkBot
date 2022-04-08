@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
+
 from dingtalkchatbot.chatbot import DingtalkChatbot
-from Lib.DailySentence import EduicContent
+
+from Lib.eudicnet import EuDicNet
 from Lib.qWeatherAPI import QWeatherApi
 
 # 取得天气信息
@@ -19,14 +21,13 @@ indice_text = ''
 for i in range(len(indices)):
     indice_text += indices[i] + '  \n  '
 
-
 # 取得每日图片和每日一句
-# 实例化Euic
-euic = EduicContent()
+# 实例化Eudic
+eudic = EuDicNet()
 # 取得每日内容
 # sentence = euic.get_daily_content()[0]
 # 取得每日图片
-image = euic.get_daily_content()[1]
+image = eudic.get_daily_content()[1]
 # 编辑要发送的信息
 md_message = '#### 北海实时天气  \n  ' \
              '##### {forcast}  \n  ' \
