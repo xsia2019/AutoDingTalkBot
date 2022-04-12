@@ -2,8 +2,9 @@
 # get daily sentence from http://dict.eudic.net/home/dailysentence/
 #
 
-import requests
 import re
+
+import requests
 
 
 class EuDicNet(object):
