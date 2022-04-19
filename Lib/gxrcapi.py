@@ -1,12 +1,25 @@
 # 查询www.gxrc.com的工作信息
+# 参考：https://www.gxrc.com/
 # -*- coding: utf-8 -*-
+
 import random
 import re
 import time
+from datetime import datetime, timedelta
+
 import requests
 from bs4 import BeautifulSoup
 from fake_user_agent.main import user_agent
-from datetime import datetime, timedelta
+
+
+# 根据关键字列表生成re过滤器
+def get_pattern(words):
+    if words is not None:
+        keywords = [word.strip() for word in words.split(',') if word]
+        pattern = '|'.join(keywords)
+        return re.compile(pattern)
+    else:
+        return None
 
 
 def get_timestr():
@@ -24,12 +37,18 @@ def get_keyword_pattern(word_list):
 
 
 class GXRCAPI(object):
-    def __init__(self):
+    def __init__(self, salary=10000, exclusive_job=None, exclusive_company=None, date='Today'):
         self.headers = {'User-Agent': user_agent()}
         # 所有职位列表url
         url = 'https://s.gxrc.com/sJob?orderType=1&page=1'
         raw_url = 'https://s.gxrc.com/sCareer?page=2&posType=5467'
         self.channel_url = 'https://s.gxrc.com/sCareer?'
+        # 接收关键字
+        self.salary = salary  # 薪水标准默认10000
+        self.exclusive_job = exclusive_job
+        self.exclusive_company = exclusive_company
+        self.date = date
+
         # self.category = [
         #     5467, 5468, 5469, 5470, 5471, 5472,
         #     5473, 5474, 5475, 5476, 5477, 5478,
@@ -38,16 +57,21 @@ class GXRCAPI(object):
             5470,
         ]
 
-    # 获取每个职位频道的的所有url
+    # 1 获取每个职位频道的的所有url
     def get_url(self):
-        # 得到初始url
+        """
+        从每个职位频道首页获得各个频道的总页数并生成url
+        """
+        # 从各个职位频道的首页url中提取职位频道列表的总页数
         for i in self.category:
             url = 'https://s.gxrc.com/sCareer?posType={id}&page=1'.format(id=i)
             html = self.get_html(url)
-            soup = BeautifulSoup(html, 'lxml')
-            page = soup.find('div', class_='page').find('i', id='pgInfo_last').get_text().strip()[0:3]
-            page = int(page)
-            for num in range(1, page + 1):
+            # 从分类首页url中取得职位频道的总页数
+            pattern = re.compile(r'(pgInfo_last.*">)(\d{3})')
+            total_page = re.search(pattern, html).group(2)
+            total_page = int(total_page)
+            # 生成每个职位频道的url
+            for num in range(1, total_page + 1):
                 url = self.channel_url + 'posType={id}&page={page}'.format(id=i, page=num)
                 yield url
 

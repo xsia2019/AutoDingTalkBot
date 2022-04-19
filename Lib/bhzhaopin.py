@@ -2,13 +2,15 @@
 # https://www.365zhaopin.com/
 # -*- coding: utf-8 -*-
 
+import datetime
+import random
 import re
 import time
-import random
+
 import requests
-import datetime
 from bs4 import BeautifulSoup
 from fake_user_agent.main import user_agent
+
 
 # 根据关键字列表生成re过滤器
 def get_pattern(words):
@@ -67,7 +69,12 @@ class BeiHaiJob(object):
 
     # 生成链接
     def get_url(self):
-        for i in range(1, self.get_page_num()+1):
+        html = self.get_html(self.url + str(1))
+        # 获取页数
+        pattern = re.compile(r'(class="ml20">1/)(\d{3})(页)')
+        total_page = re.search(pattern, html).group(2)
+        total_page = int(total_page)
+        for i in range(1, total_page + 1):
             yield self.url + str(i)
 
     #  解析网页内容
