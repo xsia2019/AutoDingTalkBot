@@ -1,6 +1,8 @@
 # 查询www.gxrc.com的工作信息
 # 参考：https://www.gxrc.com/
 # -*- coding: utf-8 -*-
+
+import datetime
 import random
 import re
 import time
@@ -29,9 +31,20 @@ def get_time_str():
     return time_str, today
 
 
+# 获取筛选的职位信息
+def today_pattern():
+    today = get_time_str()[1]
+    return re.compile(today)
+
+
 class GXRCAPI(object):
 
-    def __init__(self):
+    def __init__(self, salary=10000, job_filter=None, company_filter=None,):
+
+        self.salary = salary
+        self.job_filter = get_pattern(job_filter)
+        self.company_filter = get_pattern(company_filter)
+
         self.url = 'https://s.gxrc.com/sJob?orderType={channel}&page=1'
         self.headers = {'User-Agent': user_agent()}
         self.session = requests.Session()
@@ -41,6 +54,14 @@ class GXRCAPI(object):
             5467, 5468, 5469, 5470, 5471, 5472,
             5473, 5474, 5475, 5476, 5477, 5478,
         ]
+
+        # 计数参数
+        self.total_count = 0
+        self.job_count = 0
+        # 运行时间
+        self.start_time = datetime.now()
+        self.end_time = None
+
 
     # 获取每个频道的总页数，后生成频道总链接
     def get_channel_urls(self, channel):
@@ -56,17 +77,6 @@ class GXRCAPI(object):
                 yield url[:-1] + str(page_num + 1)
         else:
             return None
-
-    # 获取每个频道链接的职位信息
-    def get_channel_info(self, channel_url):
-        try:
-            html = self.get_html(channel_url)
-            if html:
-                soup = BeautifulSoup(html, 'lxml')
-                job_item = soup.select('#posList')
-                yield job_item
-        except Exception as e:
-            print(e)
 
     # 获取每个频道链接包含的职位信息
     def extract_job(self, response):
@@ -100,22 +110,39 @@ class GXRCAPI(object):
                 yield job_name, job_company, job_salary_low, job_salary_high, \
                       job_address, job_time, job_posInfo, job_url
         except Exception as e:
+            print('extract_job')
             print(e)
 
     # 得到筛选过的职位信息
     def get_today_job(self):
         # 取得频道ID
         for channel in self.category:
+            print('channel:', channel)
             for url in self.get_channel_urls(channel):
                 # 开始获取每个频道页面的职位信息
                 html = self.get_html(url)
                 # 解析html得到职位信息
                 job_info = self.extract_job(html)
                 for job in job_info:
-                    if self.get_today_pattern().search(job[5]):
-                        yield job
-                        time.sleep(5)
+                    # 总职位数计数+1
+                    self.total_count += 1
+                    name = job[0]
+                    company = job[1]
+                    salary = int(job[2])
+                    date = job[5]
+                    # 筛选日期
+                    if today_pattern().search(date):
+                        # 筛选薪水筛选岗位筛选公司
+                        if salary < self.salary or \
+                                self.job_filter.search(name) or \
+                                self.company_filter.search(company):
+                            continue
+                        else:
+                            # 生成的职位数计数+1
+                            self.job_count += 1
+                            yield job
                     else:
+                        self.end_time = datetime.datetime.now()
                         break
 
     # 获取页面html
@@ -136,14 +163,4 @@ class GXRCAPI(object):
                 else:
                     break
 
-    # 获取筛选的职位信息
-    def get_today_pattern(self):
-        today = get_time_str()[1]
-        return re.compile(today)
 
-
-if __name__ == '__main__':
-    gxrc = GXRCAPI()
-    job_infos = gxrc.get_today_job()
-    for job in job_infos:
-        print(job)
