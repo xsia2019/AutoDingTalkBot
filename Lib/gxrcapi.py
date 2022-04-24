@@ -21,7 +21,7 @@ def get_pattern(words):
     else:
         return None
 
-
+# 得到当前时间
 def get_timestr():
     bjtime = datetime.utcnow() + timedelta(hours=8)
     timestr = bjtime.strftime('%Y%m%d%H%M%S')
@@ -29,6 +29,7 @@ def get_timestr():
     return timestr, today
 
 
+# 根据关键字列表生成re过滤器
 def get_keyword_pattern(word_list):
     new_keyword = ''
     for w in word_list.split(','):
