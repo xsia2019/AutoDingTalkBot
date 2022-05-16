@@ -54,6 +54,7 @@ class GXRCAPI(object):
             5467, 5468, 5469, 5470, 5471, 5472,
             5473, 5474, 5475, 5476, 5477, 5478,
         ]
+        self.keyword_url = 'https://s.gxrc.com/sJob?keyword='
 
         # 计数参数
         self.total_count = 0
@@ -82,7 +83,7 @@ class GXRCAPI(object):
     def extract_job(self, response):
         try:
             soup = BeautifulSoup(response, 'lxml')
-            job_items = soup.select('#posList')
+            job_items = soup.select('#posList div.rlOne')
             # 遍历职位信息
             for job_info in job_items:
                 # 获取职位名称
@@ -163,4 +164,30 @@ class GXRCAPI(object):
                 else:
                     break
 
-
+    # 获取关键字的信息
+    def get_keyword_job(self, keyword, content):
+        keyword = keyword.strip()
+        content = content.strip()
+        for i in range(1, 10):
+            # 得到链接
+            url = self.keyword_url + keyword + '&page=' + str(i)
+            # 得到关键字的页面html
+            html = self.get_html(url)
+            # 获取页面的职位信息
+            job_info = self.extract_job(html)
+            for job in job_info:
+                # 总职位数计数+1
+                self.total_count += 1
+                name = job[0]
+                date = job[5]
+                job_posInfo = job[6]
+                # 筛选日期
+                if today_pattern().search(date):
+                    # 筛选职位
+                    content_filter = get_pattern(content)
+                    if content_filter.search(name) or content_filter.search(job_posInfo):
+                        yield job
+                    else:
+                        continue
+                else:
+                    break

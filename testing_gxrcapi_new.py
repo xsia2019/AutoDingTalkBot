@@ -15,15 +15,11 @@ if __name__ == '__main__':
     company_filter = read_file('exclusive_company.txt')
 
     gxrc = GXRCAPI(salary=salary, job_filter=job_filter, company_filter=company_filter)
+    # 取得正常工作
     job_infos = gxrc.get_today_job()
-    for job in job_infos:
-        print(job)
-
-    # 程序运行信息
-    total_count = gxrc.total_count
-    job_count = gxrc.job_count
-    usage = (gxrc.end_time - gxrc.start_time).seconds
-    message = '总共抓取了{}条招聘信息，其中有{}条有效信息，耗时{}秒'.format(total_count, job_count, usage)
-    print('-' * 50)
-    print(message)
-    print('-' * 50)
+    for job_info in job_infos:
+        print(job_info)
+    # 取得兼职工作
+    part_time_jobs = gxrc.get_keyword_job('兼职', '英语,翻译')
+    for part_time_job in part_time_jobs:
+        print(part_time_job)
