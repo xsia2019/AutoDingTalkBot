@@ -125,8 +125,6 @@ class GXRCAPI(object):
                 # 解析html得到职位信息
                 job_info = self.extract_job(html)
                 for job in job_info:
-                    # 总职位数计数+1
-                    self.total_count += 1
                     name = job[0]
                     company = job[1]
                     salary = int(job[2])
@@ -139,11 +137,9 @@ class GXRCAPI(object):
                                 self.company_filter.search(company):
                             continue
                         else:
-                            # 生成的职位数计数+1
-                            self.job_count += 1
-                            yield job
+                            job_message = self.get_info_format(job)
+                            yield job_message
                     else:
-                        self.end_time = datetime.datetime.now()
                         break
 
     # 获取页面html
@@ -186,8 +182,21 @@ class GXRCAPI(object):
                     # 筛选职位
                     content_filter = get_pattern(content)
                     if content_filter.search(name) or content_filter.search(job_posInfo):
-                        yield job
+                        message = self.get_info_format(job)
+                        yield message
                     else:
                         continue
                 else:
                     break
+
+    def get_info_format(self, job):
+        job_title = job[0] + ', '
+        job_salary = job[2] + ', '
+        job_company = job[1] + ', '
+        job_date = job[5] + ', '
+        job_posInfo = job[6] + ', '
+        job_url = '[详情](' + job[7] + ')'
+        # 返回生成的文字
+        # return job_title + job_salary + job_company + job_date + job_posInfo + job_url + '  \n  '
+        result = job_title + job_salary + job_company + job_date + job_url + '  \n  '
+        return result
