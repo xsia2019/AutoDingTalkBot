@@ -2,9 +2,9 @@
 
 import datetime
 import sys
-from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 
-from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
+from dingtalkchatbot.chatbot import DingtalkChatbot
+
 from Lib.bhzhaopin import BeiHaiJob
 
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
         bot = DingtalkChatbot(webhook, secret=secret)
 
         # 定义筛选条件
-        salary = 8000
+        salary = 10000
         exc_job = read_file('exclusive_job.txt')
         exc_company = read_file('exclusive_company.txt')
 
