@@ -14,8 +14,8 @@ if __name__ == '__main__':
     try:
         # 定义筛选条件
         salary = 2000
-        exc_job = read_file('exclusive_job.txt')
-        exc_company = read_file('exclusive_company.txt')
+        exc_job = read_file('../exclusive_job.txt')
+        exc_company = read_file('../exclusive_company.txt')
 
         # 获取招聘信息
         beihaijob = BeiHaiJob(salary=salary, exc_job=exc_job, exc_company=exc_company)

@@ -2,6 +2,7 @@
 
 import datetime
 import sys
+
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 
 from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
@@ -27,8 +28,8 @@ if __name__ == '__main__':
 
         # 定义筛选条件
         salary = 15000
-        job_filter = read_file('exclusive_job.txt')
-        company_filter = read_file('exclusive_company.txt')
+        job_filter = read_file('../exclusive_job.txt')
+        company_filter = read_file('../exclusive_company.txt')
 
         # 获取招聘信息
         gxrc = GXRCAPI(salary=salary, job_filter=job_filter, company_filter=company_filter)
