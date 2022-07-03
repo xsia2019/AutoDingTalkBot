@@ -2,7 +2,6 @@
 
 import datetime
 import sys
-
 from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 
 from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret

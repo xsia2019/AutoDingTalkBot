@@ -5,9 +5,8 @@
 import datetime
 import random
 import re
-import time
-
 import requests
+import time
 from bs4 import BeautifulSoup
 from fake_user_agent.main import user_agent
 
@@ -26,7 +25,7 @@ class BeiHaiJob(object):
     def __init__(self, salary=10000, exc_job=None, exc_company=None,):
         self.headers = {'User-Agent': user_agent()}  # 取得ua
         # 北海365招聘网职位信息列表首页
-        self.url = 'https://www.365zhaopin.com/index.php?do=search&p='
+        self.url = 'https://www.365zhaopin.com/index.php?do=search&sorttype=1&p='
         # 北海365招聘网主页
         self.homepage = 'https://www.365zhaopin.com/'
         # 接收关键字
@@ -57,16 +56,6 @@ class BeiHaiJob(object):
                 else:
                     break
 
-    #  获取页数
-    def get_page_num(self):
-        html = self.get_html(self.url + str(1))
-        soup = BeautifulSoup(html, 'lxml')
-        # 获取页数
-        page_num = soup.select('span.ml20')[0].get_text()
-        # 处理页数，通常页数为3位数
-        page_num = int(page_num[2:5])
-        return page_num
-
     # 生成链接
     def get_url(self):
         html = self.get_html(self.url + str(1))
@@ -79,6 +68,7 @@ class BeiHaiJob(object):
 
     #  解析网页内容
     def get_job_info(self, response):
+        job_infos = []
         try:
             soup = BeautifulSoup(response, 'lxml')
             # 取得当前页面所有的职位信息
@@ -115,60 +105,54 @@ class BeiHaiJob(object):
                     salary = re.search(r'\d{2,6}', salary).group().strip()
 
                 job_info = [title, salary, company, date, url]
-                yield job_info
+                job_infos.append(job_info)
+            return job_infos
 
         except Exception as e:
+            print('error')
             print(e)
+            print('error')
             return '解析错误'
 
-    #  获取今天的职位信息
-    def get_today_info(self):
-        for url in self.get_url():
-            # 开始抓取html
-            html = self.get_html(url)
-            # 解析html得到职位信息
-            job_info = self.get_job_info(html)
-            # 根据薪水标准筛选职位信息
-            for item in job_info:
-                # 如果不是今天发布的职位信息，中止抓取
-                if item[3] != '今天':
-                    self.end_time = datetime.datetime.now()
-                    break
-                else:
-                    yield item
-
     # 筛选职位信息
-    def filter_job(self):
-        # 根据关键字筛选职位信息
-        for job_info in self.get_today_info():
-            self.total_count += 1
-            title = job_info[0]
-            salary = int(job_info[1])
-            company = job_info[2]
-            # 职位薪水大于等于设定值
-            if salary >= self.salary:
-                # 如果设定了筛选职位信息，则根据关键字筛选（去除）
-                if self.exc_job is not None:
+    def get_filter_job(self):
+        flag = True
+        urls = self.get_url()
+        for url in urls:
+            html = self.get_html(url)
+            job_info = self.get_job_info(html)
+            # 筛选职位信息
+            for item in job_info:
+                title = item[0]
+                salary = item[1]
+                company = item[2]
+                date = item[3]
+                if date != '今天':
+                    self.end_time = datetime.datetime.now()
+                    flag = False
+                    break
+                elif int(salary) < self.salary:
+                    self.end_time = datetime.datetime.now()
+                    flag = False
+                    continue
+                elif self.exc_job is not None:
                     # 根据关键字生成pattern
                     pattern_job = get_pattern(self.exc_job)
-                    pattern_company = get_pattern(self.exc_company)
-                    # 如果职位名称中包含关键字或公司名称包含关键字，则抛弃，否则返回职位信息
-                    if re.search(pattern_job, title) or re.search(pattern_company, company):
+                    if re.search(pattern_job, title):
                         continue
-                    else:
-                        self.job_count += 1
-                        yield job_info
-                # 如果没有设定筛选职位信息，则直接返回
+                elif self.exc_company is not None:
+                    pattern_company = get_pattern(self.exc_company)
+                    if re.search(pattern_company, company):
+                        continue
                 else:
-                    self.job_count += 1
-                    yield job_info
-            else:
-                continue
+                    yield (item)
+            if not flag:
+                break
 
     # 获取职位信息并格式化输出
     def get_info_format(self):
         # 根据工作
-        for job in self.filter_job():
+        for job in self.get_filter_job():
             job_title = job[0] + ', '
             job_salary = job[1] + ', '
             job_company = job[2] + ', '
@@ -177,4 +161,3 @@ class BeiHaiJob(object):
 
             # 返回生成的文字
             yield job_title + job_salary + job_company + job_date + job_url + '  \n  '
-

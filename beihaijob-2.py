@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-import sys
-from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
 
-from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
-from Lib.bhzhaopin import BeiHaiJob
+import datetime
 
 
 # 读取文件
@@ -16,29 +12,19 @@ def read_file(file_name):
 
 if __name__ == '__main__':
     try:
-        # 接收系统传入的webhook和secret
-        webhook = sys.argv[1]
-        secret = sys.argv[2]
-        # # 本地测试
-        # webhook = PiPiDou_webhook
-        # secret = PiPiDou_secret
-        # 初始化钉钉机器人
-        bot = DingtalkChatbot(webhook, secret=secret)
-
         # 定义筛选条件
-        salary = 8000
+        salary = 2000
         exc_job = read_file('exclusive_job.txt')
         exc_company = read_file('exclusive_company.txt')
 
         # 获取招聘信息
         beihaijob = BeiHaiJob(salary=salary, exc_job=exc_job, exc_company=exc_company)
         jobInfo = beihaijob.get_info_format()
+
         # 汇总消息
         job_message = ''
         for job in jobInfo:
             job_message += job
-        if len(job_message) == 0:
-            job_message = '暂无合适的信息'
 
         # 程序运行信息
         total_count = beihaijob.total_count
@@ -48,12 +34,16 @@ if __name__ == '__main__':
 
         today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-        bot.send_markdown(title="Podcast", text='即将为你发送 {} 的北海招聘信息  \n  '.format(today), is_at_all=False)
-        bot.send_markdown(title="北海招聘信息", text=job_message, is_at_all=False)
-        bot.send_markdown(title="程序运行信息", text=message, is_at_all=False)
-        bot.send_markdown(title="Copyright", text='Power by AutoDingTalkBot on Github Actions  \n  ', is_at_all=False)
+        print("Podcast" * 20)
+        print('即将为你发送 {} 的北海招聘信息  \n  '.format(today))
+
+        print("北海招聘信息")
+        print(job_message)
+        print("程序运行信息")
+        print(message)
+        print("Copyright")
+        print('Power by AutoDingTalkBot on Github Actions  \n  ')
 
     except Exception as e:
         print(e)
         print('发送失败')
-

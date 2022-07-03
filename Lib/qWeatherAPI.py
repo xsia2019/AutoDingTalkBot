@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-import requests
 import json
+import requests
 from bs4 import BeautifulSoup
-
 
 ''' official website  https://www.qweather.com '''
 '''      dev website  https://dev.qweather.com'''

@@ -5,8 +5,8 @@
 
 import random
 import re
-import time
 import requests
+import time
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta, date
 from fake_user_agent.main import user_agent
