@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+
 from dingtalkchatbot.chatbot import DingtalkChatbot
 
 from Lib.eudicnet import EuDicNet

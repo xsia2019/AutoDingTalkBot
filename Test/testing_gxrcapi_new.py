@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import sys
 
-from dingtalkchatbot.chatbot import DingtalkChatbot, ActionCard, FeedLink, CardItem
+from dingtalkchatbot.chatbot import DingtalkChatbot
 
 from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
 from Lib.gxrcapi_new import GXRCAPI

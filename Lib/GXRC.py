@@ -5,10 +5,11 @@
 
 import random
 import re
-import requests
 import time
+from datetime import datetime
+
+import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta, date
 from fake_user_agent.main import user_agent
 
 

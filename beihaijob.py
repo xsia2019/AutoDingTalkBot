@@ -26,7 +26,7 @@ if __name__ == '__main__':
         bot = DingtalkChatbot(webhook, secret=secret)
 
         # 定义筛选条件
-        salary = 10000
+        salary = 8000
         exc_job = read_file('exclusive_job.txt')
         exc_company = read_file('exclusive_company.txt')
 
@@ -56,4 +56,3 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print('发送失败')
-

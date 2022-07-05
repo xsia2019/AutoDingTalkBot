@@ -5,8 +5,9 @@
 import datetime
 import random
 import re
-import requests
 import time
+
+import requests
 from bs4 import BeautifulSoup
 from fake_user_agent.main import user_agent
 
@@ -117,6 +118,9 @@ class BeiHaiJob(object):
     # 筛选职位信息
     def get_filter_job(self):
         flag = True
+        # 根据关键字生成pattern
+        pattern_job = get_pattern(self.exc_job)
+        pattern_company = get_pattern(self.exc_company)
         urls = self.get_url()
         for url in urls:
             html = self.get_html(url)
@@ -127,25 +131,27 @@ class BeiHaiJob(object):
                 salary = item[1]
                 company = item[2]
                 date = item[3]
+                # 非今天日期的直接跳出内循环
                 if date != '今天':
                     self.end_time = datetime.datetime.now()
                     flag = False
                     break
                 elif int(salary) < self.salary:
                     self.end_time = datetime.datetime.now()
-                    flag = False
                     continue
-                elif self.exc_job is not None:
-                    # 根据关键字生成pattern
-                    pattern_job = get_pattern(self.exc_job)
+                elif self.exc_job != '':
                     if re.search(pattern_job, title):
                         continue
-                elif self.exc_company is not None:
-                    pattern_company = get_pattern(self.exc_company)
-                    if re.search(pattern_company, company):
-                        continue
+                    elif self.exc_company != '':
+                        if re.search(pattern_company, company):
+                            continue
+                        else:
+                            yield item
+                    else:
+                        yield item
                 else:
-                    yield (item)
+                    yield item
+            # 非今天日期的直接跳出外循环
             if not flag:
                 break
 
