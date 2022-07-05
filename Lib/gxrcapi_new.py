@@ -75,18 +75,22 @@ class GXRCAPI(object):
         self.start_time = datetime.now()
         self.end_time = None
 
-    def get_urls_test(self):
-        for salary_lev in self.salary_list:
-            url = self.url.replace('{salary_lev}', str(salary_lev))
-            yield url
+        self.flag = True
 
-    # 获取每个频道的总页数，后生成频道总链接
+    # 得到链接
     def get_urls(self):
-
-        # 生成频道所有链接
-        for page_num in range(500):
-            url = self.url.replace('{page_num}', str(page_num + 1))
-            yield url
+        for salary_lev in self.salary_list:
+            self.flag = True
+            url = self.url.replace('{salary_lev}', str(salary_lev)).replace('{page_num}', '1')
+            html = self.get_html(url)
+            page_num = re.search(r'pgInfo_last.*\d*条记录">(\d*)<\/i>', html).group(1)
+            for page in range(int(page_num)):
+                url = self.url.replace('{salary_lev}', str(salary_lev)).replace('{page_num}', str(page + 1))
+                if self.flag:
+                    print(url)
+                    yield url
+                else:
+                    break
         else:
             return None
 
@@ -128,7 +132,7 @@ class GXRCAPI(object):
 
     # 得到筛选过的职位信息
     def get_filter_job(self):
-        flag = True
+
         today = today_pattern()
         # 根据关键字生成pattern
         pattern_job = get_pattern(self.job_filter)
@@ -146,7 +150,7 @@ class GXRCAPI(object):
                 date = job[5]
                 # 筛选今天的日期
                 if not today.search(date):
-                    flag = False
+                    self.flag = False
                     break
                     # 筛选薪水筛选岗位筛选公司
                 elif salary < self.salary:
@@ -166,8 +170,8 @@ class GXRCAPI(object):
                 else:
                     self.job_count += 1
                     yield job
-            if not flag:
-                break
+            # if not flag:
+            #     break
 
     # 获取页面html
     def get_html(self, url):
@@ -187,6 +191,7 @@ class GXRCAPI(object):
                 else:
                     break
 
+    # 将信息格式化
     def get_info_format(self):
         for job in self.get_filter_job():
             job_title = job[0] + ', '
@@ -199,6 +204,15 @@ class GXRCAPI(object):
             # return job_title + job_salary + job_company + job_date + job_posInfo + job_url + '  \n  '
             result = job_title + job_salary + job_company + job_date + job_url + '  \n  '
             yield result
+
+    # 获取每个频道的总页数，后生成频道总链接
+    def get_urls_old(self):
+        # 生成频道所有链接
+        for page_num in range(500):
+            url = self.url.replace('{page_num}', str(page_num + 1))
+            yield url
+        else:
+            return None
 
 
 def read_file(file_name):
