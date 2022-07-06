@@ -8,6 +8,8 @@ from dingtalkchatbot.chatbot import DingtalkChatbot
 from Lib.bhzhaopin import BeiHaiJob
 
 
+# 本地测试导入
+
 # 读取文件
 def read_file(file_name):
     with open(file_name, 'r', encoding='utf-8') as f:
@@ -16,12 +18,15 @@ def read_file(file_name):
 
 if __name__ == '__main__':
     try:
+        # 本地测试开始
+        # webhook = PiPiDou_webhook
+        # secret = PiPiDou_secret
+        # 本地测试结束
+
         # 接收系统传入的webhook和secret
         webhook = sys.argv[1]
         secret = sys.argv[2]
-        # # 本地测试
-        # webhook = PiPiDou_webhook
-        # secret = PiPiDou_secret
+
         # 初始化钉钉机器人
         bot = DingtalkChatbot(webhook, secret=secret)
 

@@ -22,11 +22,36 @@ def get_pattern(words):
         return None
 
 
+# 处理工资
+def get_salary_right(salary):
+    try:
+        if re.search(r'（底薪([\d]{1,6}[-]?){1,2}', salary):
+            salary = re.search(r'（底薪([\d]{1,6}[-]?){1,2}', salary).group()[3:]
+        elif re.search(r'面议', salary):
+            salary = 0
+        elif re.search(r'￥([\d]{1,6}[-]?){1,2}', salary):
+            salary = re.search(r'￥([\d]{1,6}[-]?){1,2}', salary).group()[1:]
+        else:
+            salary = salary
+
+        if salary == 0:
+            salary = '0'
+        elif '-' in salary:
+            salary = salary.split('-')
+            salary = salary[0]
+        else:
+            salary = re.search(r'\d{2,6}', salary).group().strip()
+
+        return salary
+    except:
+        return 0
+
+
 class BeiHaiJob(object):
-    def __init__(self, salary=10000, exc_job=None, exc_company=None,):
+    def __init__(self, salary=10000, exc_job=None, exc_company=None, ):
         self.headers = {'User-Agent': user_agent()}  # 取得ua
         # 北海365招聘网职位信息列表首页
-        self.url = 'https://www.365zhaopin.com/index.php?do=search&sorttype=1&p='
+        self.url = 'https://www.365zhaopin.com/index.php?do=search&sorttype=1&salary_id=5&p='
         # 北海365招聘网主页
         self.homepage = 'https://www.365zhaopin.com/'
         # 接收关键字
@@ -61,11 +86,13 @@ class BeiHaiJob(object):
     def get_url(self):
         html = self.get_html(self.url + str(1))
         # 获取页数
-        pattern = re.compile(r'(class="ml20">1/)(\d{3})(页)')
-        total_page = re.search(pattern, html).group(2)
+        total_page = re.search(r'(class="ml20">1/)(\d{1,3})(页)', html).group(2)
+        # pattern = re.compile(r'(class="ml20">1/)(\d{1,3})(页)')
+        # total_page = re.search(pattern, html).group(2)
         total_page = int(total_page)
         for i in range(1, total_page + 1):
-            yield self.url + str(i)
+            url = self.url + str(i)
+            yield url
 
     #  解析网页内容
     def get_job_info(self, response):
@@ -80,30 +107,13 @@ class BeiHaiJob(object):
                 title = job_item.find('div', class_='panl1').find('a').get_text().strip()
                 # 职位薪水
                 salary = job_item.find('div', class_='panl3 salary-panl3').get_text().strip()
+                salary = get_salary_right(salary)
                 # 公司名称
                 company = job_item.find('div', class_='panl10 mt3').get_text().strip()
                 # 发布日期
                 date = job_item.find('div', class_='panl5').get_text().strip()
                 # 详情链接
                 url = self.homepage + job_item.find('div', class_='panl1').find('a')['href']
-
-                # 处理工资
-                if re.search(r'（底薪([\d]{4,6}[-]?){1,2}', salary):
-                    salary = re.search(r'（底薪([\d]{4,6}[-]?){1,2}', salary).group()[3:]
-                elif re.search(r'面议', salary):
-                    salary = 0
-                elif re.search(r'￥([\d]{2,6}[-]?){1,2}', salary):
-                    salary = re.search(r'￥([\d]{2,6}[-]?){1,2}', salary).group()[1:]
-                else:
-                    salary = salary
-
-                if salary == 0:
-                    salary = '0'
-                elif '-' in salary:
-                    salary = salary.split('-')
-                    salary = salary[0]
-                else:
-                    salary = re.search(r'\d{2,6}', salary).group().strip()
 
                 job_info = [title, salary, company, date, url]
                 job_infos.append(job_info)

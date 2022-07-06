@@ -132,7 +132,6 @@ class GXRCAPI(object):
 
     # 得到筛选过的职位信息
     def get_filter_job(self):
-
         today = today_pattern()
         # 根据关键字生成pattern
         pattern_job = get_pattern(self.job_filter)
