@@ -39,6 +39,8 @@ def get_keyword_pattern(word_list):
 
 class GXRCAPI(object):
     def __init__(self, salary=10000, exclusive_job=None, exclusive_company=None, date='Today'):
+        self.total_count = None
+        self.job_count = None
         self.headers = {'User-Agent': user_agent()}
         # 所有职位列表url
         url = 'https://s.gxrc.com/sJob?orderType=1&page=1'
@@ -278,3 +280,5 @@ class GXRCAPI(object):
 
     # 生成关键字pattern
     # 当前时间截点
+    def get_info_format(self):
+        pass
