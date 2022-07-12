@@ -4,8 +4,10 @@ import datetime
 
 from dingtalkchatbot.chatbot import DingtalkChatbot
 
-from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
 from Lib.gxrcapi_new import GXRCAPI
+
+
+# from KEY.dingtalkbot_key import PiPiDou_webhook, PiPiDou_secret
 
 
 def read_file(file_name):
@@ -34,13 +36,13 @@ def get_group_message(list):
 if __name__ == '__main__':
     try:
         # 本地测试开始
-        webhook = PiPiDou_webhook
-        secret = PiPiDou_secret
+        # webhook = PiPiDou_webhook
+        # secret = PiPiDou_secret
         # 本地测试结束
 
         # 接收系统传入的webhook和secret
-        # webhook = sys.argv[1]
-        # secret = sys.argv[2]
+        webhook = sys.argv[1]
+        secret = sys.argv[2]
 
         # 初始化钉钉机器人
         bot = DingtalkChatbot(webhook, secret=secret)
