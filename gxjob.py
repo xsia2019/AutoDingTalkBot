@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import sys
 
 from dingtalkchatbot.chatbot import DingtalkChatbot
 
@@ -21,7 +22,6 @@ def get_group_message(list):
     remain = total - count
     start = 0
     step = 30
-
     while remain > 0:
         info = list[start:start + step]
         job_info = ''
